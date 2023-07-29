@@ -49,6 +49,10 @@ def gen(tree)
     # 評価した結果を画面へ出力
     puts "\tmov rdi, rax"
     puts "\tcall p"
+  elsif tree[0] == "stmts"
+    tree[1..].each do |statement|
+      gen(statement)
+    end
   else
     raise "invalid AST: #{tree}"
   end

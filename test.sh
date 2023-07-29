@@ -61,10 +61,16 @@ assert() {
 # assert 1 'p(1 >= 1)'
 # assert 0 'p(0 >= 1)'
 
+# 複文
+assert 20 '1 + 1; p 10 + 10'
+
+# 四則演算
 assert 33 'p 99 / 3'
 assert 200 'p 10 * 20'
 assert 40 'p 30 + 20 - 10'
 assert 60 'p 10 + 20 + 30'
+
+# 整数リテラル
 assert 4649 'p 4649'
 
 echo OK
