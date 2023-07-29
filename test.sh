@@ -61,7 +61,10 @@ assert() {
 # assert 1 'p(1 >= 1)'
 # assert 0 'p(0 >= 1)'
 
-assert 30 '10+20'
+assert 33 '99 / 3'
+assert 200 '10 * 20'
+assert 40 '30 + 20 - 10'
+assert 60 '10 + 20 + 30'
 assert 4649 '4649'
 
 echo OK
