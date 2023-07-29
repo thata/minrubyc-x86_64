@@ -43,6 +43,12 @@ def gen(tree)
     # R12とR13をスタックから復元
     puts "\tpop r13"
     puts "\tpop r12"
+  elsif tree[0] == "func_call" && tree[1] == "p"
+    gen(tree[2])
+
+    # 評価した結果を画面へ出力
+    puts "\tmov rdi, rax"
+    puts "\tcall p"
   else
     raise "invalid AST: #{tree}"
   end
@@ -58,10 +64,6 @@ puts "\tpush rbp"
 puts "\tmov rbp, rsp"
 
 gen(tree)
-
-# 評価した結果を画面へ出力
-puts "\tmov rdi, rax"
-puts "\tcall p"
 
 puts "\tmov rsp, rbp"
 puts "\tpop rbp"
