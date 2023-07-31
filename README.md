@@ -1,5 +1,21 @@
 # minrubyc for x86_64
-AArch64で書いたminrubyコンパイラ（ https://github.com/thata/minrubyc ）をx86_64へ移植したもの。
+
+Rubyで書かれたminrubyコンパイラ。AArch64向けに書いたminrubyコンパイラ（ https://github.com/thata/minrubyc ）をx86_64へ移植したもの。
+
+# minrubyとは？
+
+「RubyでつくるRuby」で作成するRubyのサブセット言語。
+
+https://www.lambdanote.com/products/ruby-ruby
+
+## オリジナルのminrubyとの違い
+
+- 整数しか扱えない
+- 配列はまだ未実装
+- ハッシュもまだ未実装
+- 関数の引数は6つまで
+- セルフホストは目指さない
+- その他いろいろ
 
 # Usage
 
