@@ -12,25 +12,42 @@ PARAM_REGISTERS = %w(rdi rsi rdx rcx r8 r9)
 # tree 内の変数名一覧
 def var_names(arr, tree)
   if tree[0] == "var_assign"
-    arr + [tree[1]]
+    arr.include?(tree[1]) ? arr : arr + [tree[1]]
   elsif tree[0] == "stmts"
-    tree[1..].flat_map do |statement|
-      var_names(arr, statement)
+    tmp_arr = arr
+    tree[1..].each do |statement|
+      tmp_arr = tmp_arr + var_names(tmp_arr, statement)
     end
+    tmp_arr
   else
     arr
   end
 end
 
+def func_defs(hash, tree)
+  if tree[0] == "func_def"
+    hash.merge({
+      # 関数名をキーにして [関数名, 引数, 関数本体] を格納
+      tree[1] => tree[1..]
+    })
+  elsif tree[0] == "stmts"
+    tree[1..].reduce(hash) do |acc, statement|
+      func_defs(acc, statement)
+    end
+  else
+    hash
+  end
+end
+
 # スタックフレーム上の変数のアドレスをベースポインタ（RBP）からのオフセットとして返す
 # 例：
-#   ひとつ目の変数のアドレス = ベースポインタ(RBP) - 0
-#   ふたつ目の変数のアドレス = ベースポインタ(RBP) - 8
+#   ひとつ目の変数のアドレス = ベースポインタ(RBP) - 8
 #   ふたつ目の変数のアドレス = ベースポインタ(RBP) - 16
+#   ふたつ目の変数のアドレス = ベースポインタ(RBP) - 24
 #   ...
 def var_offset(var, env)
   # 変数1つにつき8バイトの領域が必要
-  env.index(var) * -8
+  (env.index(var) + 1) * -8
 end
 
 def gen(tree, env)
@@ -123,6 +140,8 @@ def gen(tree, env)
 
     # 関数を呼び出す
     puts "\tcall #{tree[1]}"
+  elsif tree[0] == "func_def"
+    # ここでは何もしない
   elsif tree[0] == "stmts"
     tree[1..].each do |statement|
       gen(statement, env)
@@ -158,9 +177,51 @@ end
 
 tree = minruby_parse(ARGF.read)
 env = var_names([], tree)
+func_defs = func_defs({}, tree)
 
 puts "\t.intel_syntax noprefix"
 puts "\t.text"
+
+# ユーザー定義関数
+func_defs.values.each do |func_def|
+  puts "// func_def: #{func_def}"
+  puts "// ... env: #{env || []}"
+
+  name, args, body = func_def
+  puts "\t// name: #{name}"
+  puts "\t// args: #{args}"
+  puts "\t// body: #{body}"
+
+  env = var_names(args, body)
+  puts "\t// env: #{env}"
+
+  puts "\t.globl #{name}"
+  puts "#{name}:"
+  puts "\tpush rbp"
+  puts "\tmov rbp, rsp"
+
+  # ローカル変数用の領域をスタック上へ確保
+  puts "\tsub rsp, #{env.size * 8}"
+
+  # 引数をスタックへ退避
+  args.each_with_index do |arg, i|
+    offset = var_offset(arg, env)
+    puts "\tmov [rbp+(#{offset})], #{PARAM_REGISTERS[i]}"
+  end
+
+  puts "\t# body start: #{body}"
+  gen(body, env)
+  puts "\t# body end"
+
+  # スタック上に確保したローカル変数用の領域を開放
+  puts "\tadd rsp, #{env.size * 8}"
+
+  puts "\tmov rsp, rbp"
+  puts "\tpop rbp"
+  puts "\tret"
+end
+
+# メイン関数
 puts "\t.globl main"
 puts "main:"
 puts "\tpush rbp"
