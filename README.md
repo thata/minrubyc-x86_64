@@ -24,3 +24,16 @@ $ docker run --platform linux/amd64 -it -v `pwd`:/root -w /root ruby:latest bash
 # ./fib
 55
 ```
+
+## sample/fib.rb
+
+```ruby
+def fib(n)
+  if n < 2
+    n
+  else
+    fib(n - 1) + fib(n - 2)
+  end
+end
+p fib(10)
+```
