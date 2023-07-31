@@ -1,6 +1,8 @@
 # minrubyc-x86_64
 minruby compiler for x86_64
 
+AArch64で書いたminrubyコンパイラ（ https://github.com/thata/minrubyc ）をx86_64へ移植した。
+
 # Usage
 
 事前に `minruby` gem をインストールしておく
