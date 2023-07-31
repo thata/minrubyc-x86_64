@@ -30,8 +30,8 @@ assert() {
 # assert 2 'case 42; when 0; p(0); when 1; p(1); else p(2); end'
 # assert 1 'case 42; when 0; p(0); when 42; p(1); else p(2); end'
 
-# # while
-# assert 55 'i = 1; sum = 0; while i <= 10; sum = sum + i; i = i + 1; end; p(sum)'
+# while
+assert 55 'i = 1; sum = 0; while i <= 10; sum = sum + i; i = i + 1; end; p(sum)'
 
 # if
 assert 42 'if (0 == 0); p(42); else p(43); end'

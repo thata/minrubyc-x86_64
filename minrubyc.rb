@@ -122,6 +122,18 @@ def gen(tree, env)
     # 偽の場合は tree[3] を評価
     gen(tree[3], env) if tree[3]
     puts ".Lend#{tree.object_id}:"
+  elsif tree[0] == "while"
+    puts ".L_while_begin#{tree.object_id}:"
+    # 条件式を評価
+    gen(tree[1], env)
+    # 真でなければループを抜ける
+    puts "\tcmp rax, 0"
+    puts "\tje .L_while_end#{tree.object_id}"
+    # ループ本体を評価
+    gen(tree[2], env)
+    # ループの先頭へジャンプ
+    puts "\tjmp .L_while_begin#{tree.object_id}"
+    puts ".L_while_end#{tree.object_id}:"
   else
     raise "invalid AST: #{tree}"
   end
