@@ -39,3 +39,8 @@ def fib(n)
 end
 p fib(10)
 ```
+
+# Run tests
+
+![image](https://github.com/thata/minrubyc-x86_64/assets/15457/b4f83c3e-dbae-4e68-8bc2-536fedf36789)
+
