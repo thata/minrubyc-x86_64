@@ -5,6 +5,10 @@
 
 require "minruby"
 
+# 関数の引数で利用するレジスタ
+# see: https://zenn.dev/ri5255/scraps/66a32c17cc515d
+PARAM_REGISTERS = %w(rdi rsi rdx rcx r8 r9)
+
 # tree 内の変数名一覧
 def var_names(arr, tree)
   if tree[0] == "var_assign"
@@ -100,12 +104,25 @@ def gen(tree, env)
     puts "\t// var_ref: #{tree[1]}(#{var_offset(tree[1], env)})"
     offset = var_offset(tree[1], env)
     puts "\tmov rax, [rbp+(#{offset})]"
-  elsif tree[0] == "func_call" && tree[1] == "p"
-    gen(tree[2], env)
+  elsif tree[0] == "func_call"
+    args = tree[2..]
 
-    # 評価した結果を画面へ出力
-    puts "\tmov rdi, rax"
-    puts "\tcall p"
+    # 引数が6個以上の場合はエラー
+    raise "too many arguments (given #{args.size}, expected 6)" if args.size > 6
+
+    # 引数を評価した結果をスタックへ退避
+    args.reverse.each do |arg|
+      gen(arg, env)
+      puts "\tpush rax"
+    end
+
+    # 退避した引数の評価値を引数レジスタへ格納
+    args.each_with_index do |_, i|
+      puts "\tpop #{PARAM_REGISTERS[i]}"
+    end
+
+    # 関数を呼び出す
+    puts "\tcall #{tree[1]}"
   elsif tree[0] == "stmts"
     tree[1..].each do |statement|
       gen(statement, env)

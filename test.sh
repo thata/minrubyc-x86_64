@@ -22,9 +22,8 @@ assert() {
 # assert 30 'def hello() a = 10; b = 20; a + b; end; p hello()'
 # assert 120 'def hello(a) b = 20; a + b; end; p hello(100)'
 
-# # func_call
-# assert 30 'p add(10, 20)'
-# assert 30 'print_int(add(10, 20))'
+# func_call
+assert 30 'p add(10, 20)'
 
 # # case
 # assert 2 'case 42; when 0; p(0); when 1; p(1); else p(2); end'
