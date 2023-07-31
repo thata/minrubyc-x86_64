@@ -113,12 +113,10 @@ def gen(tree, env)
     puts "\tpop r13"
     puts "\tpop r12"
   elsif tree[0] == "var_assign"
-    puts "\t// var_assign: #{tree[1]}(#{var_offset(tree[1], env)})"
     gen(tree[2], env)
     offset = var_offset(tree[1], env)
     puts "\tmov [rbp+(#{offset})], rax"
   elsif tree[0] == "var_ref"
-    puts "\t// var_ref: #{tree[1]}(#{var_offset(tree[1], env)})"
     offset = var_offset(tree[1], env)
     puts "\tmov rax, [rbp+(#{offset})]"
   elsif tree[0] == "func_call"
@@ -184,16 +182,8 @@ puts "\t.text"
 
 # ユーザー定義関数
 func_defs.values.each do |func_def|
-  puts "// func_def: #{func_def}"
-  puts "// ... env: #{env || []}"
-
   name, args, body = func_def
-  puts "\t// name: #{name}"
-  puts "\t// args: #{args}"
-  puts "\t// body: #{body}"
-
   env = var_names(args, body)
-  puts "\t// env: #{env}"
 
   puts "\t.globl #{name}"
   puts "#{name}:"
