@@ -110,6 +110,18 @@ def gen(tree, env)
     tree[1..].each do |statement|
       gen(statement, env)
     end
+  elsif tree[0] == "if"
+    # 条件式を評価
+    gen(tree[1], env)
+    # 真の場合は tree[2] を評価
+    puts "\tcmp rax, 0"
+    puts "\tje .Lelse#{tree.object_id}"
+    gen(tree[2], env)
+    puts "\tjmp .Lend#{tree.object_id}"
+    puts ".Lelse#{tree.object_id}:"
+    # 偽の場合は tree[3] を評価
+    gen(tree[3], env) if tree[3]
+    puts ".Lend#{tree.object_id}:"
   else
     raise "invalid AST: #{tree}"
   end
