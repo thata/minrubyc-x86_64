@@ -61,6 +61,10 @@ assert() {
 # assert 1 'p(1 >= 1)'
 # assert 0 'p(0 >= 1)'
 
+# 変数
+assert 30 'a = 10; b = 20; p a + b'
+assert 10 'a = 10; p a'
+
 # 複文
 assert 20 '1 + 1; p 10 + 10'
 
