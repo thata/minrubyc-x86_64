@@ -2,7 +2,7 @@
 
 Rubyで書かれたminrubyコンパイラ。AArch64向けに書いたminrubyコンパイラ（ https://github.com/thata/minrubyc ）をx86_64へ移植したもの。
 
-# minrubyとは？
+## minrubyとは？
 
 「RubyでつくるRuby」で作成するRubyのサブセット言語。
 
