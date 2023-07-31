@@ -32,7 +32,7 @@ end
 def gen(tree, env)
   if tree[0] == "lit"
     puts "\tmov rax, #{tree[1]}"
-  elsif %w(+ - * /).include?(tree[0])
+  elsif %w(+ - * / == != < <= > >=).include?(tree[0])
     # R12とR13をスタックへ退避
     puts "\tpush r12"
     puts "\tpush r13"
@@ -60,6 +60,30 @@ def gen(tree, env)
       puts "\tmov rax, r12"
       puts "\tcqo"
       puts "\tidiv r13"
+    when "=="
+      puts "\tcmp r12, r13"
+      puts "\tsete al"
+      puts "\tmovzb rax, al"
+    when "!="
+      puts "\tcmp r12, r13"
+      puts "\tsetne al"
+      puts "\tmovzb rax, al"
+    when "<"
+      puts "\tcmp r12, r13"
+      puts "\tsetl al"
+      puts "\tmovzb rax, al"
+    when "<="
+      puts "\tcmp r12, r13"
+      puts "\tsetle al"
+      puts "\tmovzb rax, al"
+    when ">"
+      puts "\tcmp r12, r13"
+      puts "\tsetg al"
+      puts "\tmovzb rax, al"
+    when ">="
+      puts "\tcmp r12, r13"
+      puts "\tsetge al"
+      puts "\tmovzb rax, al"
     else
       raise "invalid operator: #{tree[0]}"
     end
